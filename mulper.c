@@ -30,7 +30,8 @@ bool get_next(mpz_t out, mpz_t num) {
 
 ui multiplication_persistence(mpz_t num, bool verbose, ui start) {
     mpz_t next;
-    ui iters = start;
+    ui iters = 1;
+     
 
     mpz_init(next);
 
@@ -58,6 +59,7 @@ ui multiplication_persistence(mpz_t num, bool verbose, ui start) {
 
 void smart_search(ui digits) {
     printf("digits: %lu\n", digits);
+    char buf[102400];
 
     mpz_t num, threes;
     mpz_init(num);
@@ -75,15 +77,20 @@ void smart_search(ui digits) {
             ui j = digits - (i + k);
 
 
-            mpz_set_ui(num, 1); // num = 1
             mpz_ui_pow_ui(num, 7, k); //num = 7^k
+
             mpz_mul_2exp(num, num, i); // num *= 2^i
 
-            mpz_ui_pow_ui(threes, 3, k); //threes = 3^k
+            mpz_ui_pow_ui(threes, 3, j); //threes = 3^j
             mpz_mul(num, num, threes);
+
 
             ui pers = multiplication_persistence(num, false, 1);
             if (pers > 2) { // only logging the interesting ones
+                memset(&buf[0],   '2', i);
+                memset(&buf[i],   '3', j);
+                memset(&buf[i+j], '7', k);
+                buf[i+j+k] = '\0';
                 printf("%s \t %lu\n", buf, pers);
             }
 
